@@ -10,19 +10,17 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class Associado {
+public class Voto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private Boolean voto;
 
-    @Column(unique = true)
-    private String cpf;
+    @ManyToOne
+    private Sessao sessao;
 
-    public Associado(String nome, String cpf) {
-        this.nome = nome;
-        this.cpf = cpf;
-    }
+    @ManyToOne
+    private Associado associado;
 }

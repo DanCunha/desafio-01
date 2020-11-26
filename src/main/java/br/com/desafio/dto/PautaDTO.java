@@ -14,11 +14,6 @@ public class PautaDTO {
 
     private String descricao;
 
-    public PautaDTO(Pauta pauta) {
-        this.id = pauta.getId();
-        this.descricao = pauta.getDescricao();
-    }
-
     public Pauta converter(){
         return new Pauta(this.descricao);
     }

@@ -3,7 +3,7 @@ package br.com.desafio.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -12,16 +12,15 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Sessao {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
-
     @OneToOne
     private Pauta pauta;
 
-    @OneToMany
-    private List<Associado> associados;
+    private LocalDateTime dataHoraInicio;
+
 }
 
