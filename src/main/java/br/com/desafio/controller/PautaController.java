@@ -5,6 +5,7 @@ import br.com.desafio.dto.ResponseDTO;
 import br.com.desafio.model.Associado;
 import br.com.desafio.model.Pauta;
 import br.com.desafio.repository.PautaRepository;
+import br.com.desafio.service.PautaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -18,6 +19,7 @@ import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/pauta")
@@ -26,7 +28,7 @@ import java.util.List;
 public class PautaController {
 
     @Autowired
-    private PautaRepository pautaRepository;
+    private PautaService service;
 
     @PostMapping
     @ApiOperation(value = "Criar nova pauta", response = Pauta.class)
@@ -36,8 +38,7 @@ public class PautaController {
     })
     public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto) {
         try {
-            validaPauta(dto.getDescricao());
-            Pauta entity = pautaRepository.save(dto.converter());
+            Pauta entity  = service.save(dto.converter());
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
@@ -47,17 +48,16 @@ public class PautaController {
     @ApiOperation(value="Retorna uma lista de Pautas")
     @GetMapping
     public List<Pauta> listAll(){
-        return pautaRepository.findAll();
+        return service.listAll();
     }
 
     @ApiOperation(value="Retorna pauta por id")
     @GetMapping("/{id}")
-    public List<Pauta> findById(@PathVariable(value="id") long id){
-        return pautaRepository.findAll();
-    }
-
-    private void validaPauta(String descricao) {
-        if(pautaRepository.findByDescricao(descricao).isPresent())
-            throw new EntityExistsException("Descrição de Pauta já existe");
+    public ResponseEntity<Pauta> findById(@PathVariable(value="id") long id){
+        Optional<Pauta> entity = service.findById(id);
+        if(entity.isPresent())
+            return ResponseEntity.ok().body(entity.get());
+        else
+            return ResponseEntity.noContent().build();
     }
 }
