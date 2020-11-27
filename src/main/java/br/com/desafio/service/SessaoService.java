@@ -1,5 +1,6 @@
 package br.com.desafio.service;
 
+import br.com.desafio.dto.ResponseClientDTO;
 import br.com.desafio.dto.ResponseSessaoDTO;
 import br.com.desafio.model.Sessao;
 import br.com.desafio.model.Voto;
@@ -9,6 +10,8 @@ import br.com.desafio.repository.VotoRepository;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.persistence.EntityExistsException;
 import java.time.LocalDateTime;
@@ -28,7 +31,7 @@ public class SessaoService {
     private VotoRepository votoRepository;
 
     public Sessao save(Sessao sessao) throws NotFoundException {
-        if(pautaRepository.findById(sessao.getPauta().getId()).isPresent())
+        if(pautaRepository.findById(sessao.getPauta().getId()).isEmpty())
             throw new NotFoundException("Pauta não encontrada");
 
         return sessaoRepository.save(sessao);
@@ -75,5 +78,16 @@ public class SessaoService {
         if(votoRepository.findByAssociadoIdAndSessaoId(voto.getAssociado().getId(), voto.getSessao().getId()).isPresent()){
             throw new EntityExistsException("Associado já votou.");
         }
+
+        if(cpfClient(voto.getAssociado().getCpf()))
+            throw new NotFoundException("Não habilitado para votar");
+    }
+
+    public Boolean cpfClient(String cpf) {
+        Mono<ResponseClientDTO> message = WebClient.create("https://user-info.herokuapp.com").get().uri(uriBuilder -> uriBuilder.path("/users/"+cpf).build()).retrieve()
+                .bodyToMono(ResponseClientDTO.class);
+        ResponseClientDTO result = message.block();
+
+        return result.getStatus().equals("UNABLE_TO_VOTE");
     }
 }
