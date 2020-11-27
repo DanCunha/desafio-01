@@ -1,10 +1,12 @@
 package br.com.desafio.controller;
 
 import br.com.desafio.dto.ResponseDTO;
+import br.com.desafio.dto.ResponseSessaoDTO;
 import br.com.desafio.dto.SessaoDTO;
 import br.com.desafio.dto.VotoDTO;
 import br.com.desafio.mapper.SessaoMapper;
 import br.com.desafio.mapper.VotoMapper;
+import br.com.desafio.model.Associado;
 import br.com.desafio.model.Sessao;
 import br.com.desafio.model.Voto;
 import br.com.desafio.repository.SessaoRepository;
@@ -24,10 +26,10 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 
-@Validated
 @RestController
 @RequestMapping(value = "/sessao")
 @Api(value = "Sessão")
@@ -76,6 +78,30 @@ public class SessaoController {
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
+    }
+
+    @ApiOperation(value="Retorna lista de sessões")
+    @GetMapping
+    public List<Sessao> listAll(){
+        return sessaoRepository.findAll();
+    }
+
+    @ApiOperation(value="Retorna sessão por id")
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseSessaoDTO> findById(@PathVariable(value="id") long id){
+        Optional<Sessao> sessao = sessaoRepository.findById(id);
+        List<Voto> votoList = votoRepository.findBySessaoId(id);
+
+        int votoSim = (int) votoList.stream().filter(v -> v.getVoto() == true).count();
+        int votoNao = (int) votoList.stream().filter(v -> v.getVoto() == false).count();
+
+        return ResponseEntity.ok().body(
+                ResponseSessaoDTO.builder()
+                .sessaoId(id)
+                .descricaoPauta(sessao.get().getPauta().getDescricao())
+                .votoNao(votoNao)
+                .votoSim(votoSim)
+                .total(votoNao + votoSim).build());
     }
 
     private void validacaoVoto(Voto voto) throws TimeoutException, NotFoundException {
