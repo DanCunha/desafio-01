@@ -1,5 +1,6 @@
 package br.com.desafio.controller;
 
+import br.com.desafio.config.swagger.utils.ValidateCpf;
 import br.com.desafio.dto.AssociadoDTO;
 import br.com.desafio.dto.ResponseDTO;
 import br.com.desafio.model.Associado;
@@ -12,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/associado")
@@ -33,10 +36,9 @@ public class AssociadoController {
     })
     public ResponseEntity<ResponseDTO> add(@Valid @RequestBody AssociadoDTO dto) {
         try {
+            validaAssociado(dto);
             Associado entity = associadoRepository.save(dto.converter());
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Associado cadastrado com sucesso."));
-        }catch (ConstraintViolationException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO("Associado já existe"));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -44,13 +46,27 @@ public class AssociadoController {
 
     @ApiOperation(value="Retorna uma lista de Associados")
     @GetMapping
-    public List<Associado> listAll(){
-        return associadoRepository.findAll();
+    public ResponseEntity<List<Associado>> listAll(){
+        return ResponseEntity.ok().body(associadoRepository.findAll());
     }
 
     @ApiOperation(value="Retorna um associado por id")
     @GetMapping("/{id}")
-    public List<Associado> findById(@PathVariable(value="id") long id){
-        return associadoRepository.findAll();
+    public ResponseEntity<Associado> findById(@PathVariable(value="id") long id){
+        Optional<Associado> entity = associadoRepository.findById(id);
+        if(entity.isPresent())
+            return ResponseEntity.ok().body(entity.get());
+        else
+            return ResponseEntity.noContent().build();
+    }
+
+    private void validaAssociado(AssociadoDTO dto) throws Exception {
+        ValidateCpf.isCPF(dto.getCpf());
+
+        if(associadoRepository.findByCpf(dto.getCpf()).isPresent())
+            throw new EntityExistsException("CPF já cadastrado.");
+
+        if(associadoRepository.findByNome(dto.getNome()).isPresent())
+            throw new EntityExistsException("Nome já cadastrado.");
     }
 }

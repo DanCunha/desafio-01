@@ -14,11 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 
-@Validated
 @RestController
 @RequestMapping(value = "/pauta")
 @Api(value = "API Rest Pauta")
@@ -36,10 +36,9 @@ public class PautaController {
     })
     public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto) {
         try {
+            validaPauta(dto.getDescricao());
             Pauta entity = pautaRepository.save(dto.converter());
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
-        }catch (ConstraintViolationException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO("Descrição de Pauta já existe"));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -55,5 +54,10 @@ public class PautaController {
     @GetMapping("/{id}")
     public List<Pauta> findById(@PathVariable(value="id") long id){
         return pautaRepository.findAll();
+    }
+
+    private void validaPauta(String descricao) {
+        if(pautaRepository.findByDescricao(descricao).isPresent())
+            throw new EntityExistsException("Descrição de Pauta já existe");
     }
 }
