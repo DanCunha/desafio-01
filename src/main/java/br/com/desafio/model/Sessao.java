@@ -17,10 +17,12 @@ public class Sessao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     private Pauta pauta;
 
     private LocalDateTime dataHoraInicio;
+
+    private int tempoSessao;
 
 }
 

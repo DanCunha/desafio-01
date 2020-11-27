@@ -13,13 +13,21 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+import java.util.concurrent.TimeoutException;
 
+@Validated
 @RestController
 @RequestMapping(value = "/sessao")
 @Api(value = "Sessão")
@@ -59,12 +67,28 @@ public class SessaoController {
     public ResponseEntity<ResponseDTO> votacao(@Valid @RequestBody VotoDTO dto) {
         try {
             Voto voto = VotoMapper.convertToEntity(dto);
+            validacaoVoto(voto);
+
             Voto entity = votoRepository.save(voto);
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Voto registrado com sucesso."));
         }catch (ConstraintViolationException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO("Sessão já existe"));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
+        }
+    }
+
+    private void validacaoVoto(Voto voto) throws TimeoutException, NotFoundException {
+        if(votoRepository.findByAssociadoIdAndSessaoId(voto.getAssociado().getId(), voto.getSessao().getId()).isPresent()){
+            throw new EntityExistsException("Associado já votou.");
+        }
+        Optional<Sessao> sessao = sessaoRepository.findById(voto.getSessao().getId());
+        if(sessao.isPresent()){
+            long minutesBetween = ChronoUnit.MINUTES.between(sessao.get().getDataHoraInicio(), LocalDateTime.now());
+            if(minutesBetween > sessao.get().getTempoSessao())
+                throw new TimeoutException("Sessão encerrada");
+        }else{
+            throw new NotFoundException("Sessão não encontrada");
         }
     }
 }

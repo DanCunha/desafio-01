@@ -12,6 +12,7 @@ public class SessaoMapper {
         return Sessao.builder()
                 .pauta(Pauta.builder().id(dto.getPautaId()).build())
                 .dataHoraInicio(LocalDateTime.now())
+                .tempoSessao(dto.getTempoSessao() > 0 ? dto.getTempoSessao() : 1)
                 .build();
     }
 }
