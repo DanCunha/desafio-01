@@ -11,6 +11,7 @@ import br.com.desafio.model.Sessao;
 import br.com.desafio.model.Voto;
 import br.com.desafio.repository.SessaoRepository;
 import br.com.desafio.repository.VotoRepository;
+import br.com.desafio.service.SessaoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeoutException;
 public class SessaoController {
 
     @Autowired
-    private SessaoRepository sessaoRepository;
+    private SessaoService sessaoService;
 
     @Autowired
     private VotoRepository votoRepository;
@@ -51,10 +52,8 @@ public class SessaoController {
     public ResponseEntity<ResponseDTO> add(@Valid @RequestBody SessaoDTO dto) {
         try {
             Sessao sessao = SessaoMapper.convertToEntity(dto);
-            Sessao entity = sessaoRepository.save(sessao);
+            Sessao entity = sessaoService.save(sessao);
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Sessão criada com sucesso."));
-        }catch (ConstraintViolationException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO("Sessão já existe"));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -68,13 +67,8 @@ public class SessaoController {
     })
     public ResponseEntity<ResponseDTO> votacao(@Valid @RequestBody VotoDTO dto) {
         try {
-            Voto voto = VotoMapper.convertToEntity(dto);
-            validacaoVoto(voto);
-
-            Voto entity = votoRepository.save(voto);
+            Voto entity = sessaoService.votacao(VotoMapper.convertToEntity(dto));
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Voto registrado com sucesso."));
-        }catch (ConstraintViolationException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO("Sessão já existe"));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -83,38 +77,16 @@ public class SessaoController {
     @ApiOperation(value="Retorna lista de sessões")
     @GetMapping
     public List<Sessao> listAll(){
-        return sessaoRepository.findAll();
+        return sessaoService.listAll();
     }
 
     @ApiOperation(value="Retorna sessão por id")
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseSessaoDTO> findById(@PathVariable(value="id") long id){
-        Optional<Sessao> sessao = sessaoRepository.findById(id);
-        List<Voto> votoList = votoRepository.findBySessaoId(id);
-
-        int votoSim = (int) votoList.stream().filter(v -> v.getVoto() == true).count();
-        int votoNao = (int) votoList.stream().filter(v -> v.getVoto() == false).count();
-
-        return ResponseEntity.ok().body(
-                ResponseSessaoDTO.builder()
-                .sessaoId(id)
-                .descricaoPauta(sessao.get().getPauta().getDescricao())
-                .votoNao(votoNao)
-                .votoSim(votoSim)
-                .total(votoNao + votoSim).build());
-    }
-
-    private void validacaoVoto(Voto voto) throws TimeoutException, NotFoundException {
-        if(votoRepository.findByAssociadoIdAndSessaoId(voto.getAssociado().getId(), voto.getSessao().getId()).isPresent()){
-            throw new EntityExistsException("Associado já votou.");
-        }
-        Optional<Sessao> sessao = sessaoRepository.findById(voto.getSessao().getId());
-        if(sessao.isPresent()){
-            long minutesBetween = ChronoUnit.MINUTES.between(sessao.get().getDataHoraInicio(), LocalDateTime.now());
-            if(minutesBetween > sessao.get().getTempoSessao())
-                throw new TimeoutException("Sessão encerrada");
-        }else{
-            throw new NotFoundException("Sessão não encontrada");
+    public ResponseEntity<ResponseSessaoDTO> findById(@PathVariable(value="id") Long id){
+        try{
+            return ResponseEntity.ok().body(sessaoService.findById(id));
+        }catch (NotFoundException e){
+            return ResponseEntity.badRequest().body(new ResponseSessaoDTO("Sessão não encontrada"));
         }
     }
 }

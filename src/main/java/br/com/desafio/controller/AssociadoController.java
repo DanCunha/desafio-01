@@ -5,6 +5,7 @@ import br.com.desafio.dto.AssociadoDTO;
 import br.com.desafio.dto.ResponseDTO;
 import br.com.desafio.model.Associado;
 import br.com.desafio.repository.AssociadoRepository;
+import br.com.desafio.service.AssociadoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,7 +27,7 @@ import java.util.Optional;
 public class AssociadoController {
 
     @Autowired
-    private AssociadoRepository associadoRepository;
+    private AssociadoService service;
 
     @PostMapping
     @ApiOperation(value = "Criar novo Associado", response = Associado.class)
@@ -36,9 +37,8 @@ public class AssociadoController {
     })
     public ResponseEntity<ResponseDTO> add(@Valid @RequestBody AssociadoDTO dto) {
         try {
-            validaAssociado(dto);
-            Associado entity = associadoRepository.save(dto.converter());
-            return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Associado cadastrado com sucesso."));
+            Associado associado = service.save(dto.converter());
+            return ResponseEntity.created(null).body(new ResponseDTO(associado.getId(), "Associado cadastrado com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -47,26 +47,17 @@ public class AssociadoController {
     @ApiOperation(value="Retorna uma lista de Associados")
     @GetMapping
     public ResponseEntity<List<Associado>> listAll(){
-        return ResponseEntity.ok().body(associadoRepository.findAll());
+        return ResponseEntity.ok().body(service.listAll());
     }
 
     @ApiOperation(value="Retorna um associado por id")
     @GetMapping("/{id}")
-    public ResponseEntity<Associado> findById(@PathVariable(value="id") long id){
-        Optional<Associado> entity = associadoRepository.findById(id);
+    public ResponseEntity<Associado> findById(@PathVariable(value="id") Long id){
+        Optional<Associado> entity = service.findById(id);
         if(entity.isPresent())
             return ResponseEntity.ok().body(entity.get());
         else
             return ResponseEntity.noContent().build();
     }
 
-    private void validaAssociado(AssociadoDTO dto) throws Exception {
-        ValidateCpf.isCPF(dto.getCpf());
-
-        if(associadoRepository.findByCpf(dto.getCpf()).isPresent())
-            throw new EntityExistsException("CPF já cadastrado.");
-
-        if(associadoRepository.findByNome(dto.getNome()).isPresent())
-            throw new EntityExistsException("Nome já cadastrado.");
-    }
 }

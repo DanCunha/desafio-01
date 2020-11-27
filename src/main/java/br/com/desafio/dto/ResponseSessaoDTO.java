@@ -18,4 +18,10 @@ public class ResponseSessaoDTO {
     private int votoNao;
 
     private int total;
+
+    private String message;
+
+    public ResponseSessaoDTO(String message) {
+        this.message = message;
+    }
 }
