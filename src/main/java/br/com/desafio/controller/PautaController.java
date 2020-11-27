@@ -2,6 +2,7 @@ package br.com.desafio.controller;
 
 import br.com.desafio.dto.PautaDTO;
 import br.com.desafio.dto.ResponseDTO;
+import br.com.desafio.model.Associado;
 import br.com.desafio.model.Pauta;
 import br.com.desafio.repository.PautaRepository;
 import io.swagger.annotations.Api;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.List;
 
 @Validated
 @RestController
@@ -41,5 +43,17 @@ public class PautaController {
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
+    }
+
+    @ApiOperation(value="Retorna uma lista de Pautas")
+    @GetMapping
+    public List<Pauta> listAll(){
+        return pautaRepository.findAll();
+    }
+
+    @ApiOperation(value="Retorna pauta por id")
+    @GetMapping("/{id}")
+    public List<Pauta> findById(@PathVariable(value="id") long id){
+        return pautaRepository.findAll();
     }
 }

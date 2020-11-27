@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/associado")
@@ -39,5 +40,17 @@ public class AssociadoController {
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
+    }
+
+    @ApiOperation(value="Retorna uma lista de Associados")
+    @GetMapping
+    public List<Associado> listAll(){
+        return associadoRepository.findAll();
+    }
+
+    @ApiOperation(value="Retorna um associado por id")
+    @GetMapping("/{id}")
+    public List<Associado> findById(@PathVariable(value="id") long id){
+        return associadoRepository.findAll();
     }
 }
