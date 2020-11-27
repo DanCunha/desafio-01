@@ -29,8 +29,8 @@ public class SwaggerConfig {
 
     private ApiInfo metaInfo(){
         ApiInfo apiInfo = new ApiInfo(
-                "Child API Rest",
-                "Api Rest de cadastro de atividades",
+                "Votação API Rest",
+                "Api Rest para votação em pautas",
                 "1.0",
                 "Terms of Service",
                 new Contact("Daniel Cunha", "https://github.com/DanCunha", "cunhacdaniel@gmail.com"),
