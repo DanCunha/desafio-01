@@ -80,7 +80,7 @@ public class SessaoController {
         return sessaoService.listAll();
     }
 
-    @ApiOperation(value="Retorna sessão por id")
+    @ApiOperation(value="Retorna resultados da Sessão por id")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseSessaoDTO> findById(@PathVariable(value="id") Long id){
         try{

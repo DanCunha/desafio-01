@@ -9,7 +9,17 @@
 
 ## API REST
 
-Para ver a documentação REST da aplicação, acesse [Swagger UI](https://dcc-api-votacao.herokuapp.com/swagger-ui.html).
+Para ver a documentação REST da aplicação, acesse [API-Votacao](https://dcc-api-votacao.herokuapp.com/swagger-ui.html).
+
+## Funcionamento
+
+Após criar um Associado e uma Pauta, podemos criar a sessão para votação na pauta criada
+
+Criar a sessão passando o id da Pauta e o tempo da sessão em minutos [Criar Sessão](https://dcc-api-votacao.herokuapp.com/swagger-ui.html#/sessao-controller/addUsingPOST_2).
+
+Com a sessão criada podemos dar início a votação passando o id da sessão e id do associado [Votação](https://dcc-api-votacao.herokuapp.com/swagger-ui.html#/sessao-controller/votacaoUsingPOST).
+
+O resultado da votação pode ser obtido passando o id da sessão [Resultado Votação](https://dcc-api-votacao.herokuapp.com/swagger-ui.html#/sessao-controller/findByIdUsingGET_2).
 
 ## Versionamento
 

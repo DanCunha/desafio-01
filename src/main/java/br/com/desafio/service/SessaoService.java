@@ -2,12 +2,16 @@ package br.com.desafio.service;
 
 import br.com.desafio.dto.ResponseClientDTO;
 import br.com.desafio.dto.ResponseSessaoDTO;
+import br.com.desafio.model.Associado;
 import br.com.desafio.model.Sessao;
 import br.com.desafio.model.Voto;
+import br.com.desafio.repository.AssociadoRepository;
 import br.com.desafio.repository.PautaRepository;
 import br.com.desafio.repository.SessaoRepository;
 import br.com.desafio.repository.VotoRepository;
 import javassist.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -29,10 +33,17 @@ public class SessaoService {
     private PautaRepository pautaRepository;
     @Autowired
     private VotoRepository votoRepository;
+    @Autowired
+    private AssociadoRepository associadoRepository;
+
+    private Logger logger = LoggerFactory.getLogger(SessaoService.class);
 
     public Sessao save(Sessao sessao) throws NotFoundException {
-        if(pautaRepository.findById(sessao.getPauta().getId()).isEmpty())
+        if(pautaRepository.findById(sessao.getPauta().getId()).isEmpty()){
+            logger.error("Error Exception: Pauta não encontrada");
             throw new NotFoundException("Pauta não encontrada");
+        }
+
 
         return sessaoRepository.save(sessao);
     }
@@ -44,8 +55,11 @@ public class SessaoService {
     public ResponseSessaoDTO findById(Long id) throws NotFoundException {
         Optional<Sessao> sessao = sessaoRepository.findById(id);
 
-        if(sessao.isEmpty())
+        if(sessao.isEmpty()){
+            logger.error("Error Exception: Sessão não encontrada");
             throw new NotFoundException("Sessão não encontrada");
+        }
+
 
         List<Voto> votoList = votoRepository.findBySessaoId(id);
 
@@ -67,20 +81,35 @@ public class SessaoService {
 
     private void validacaoVoto(Voto voto) throws TimeoutException, NotFoundException {
         Optional<Sessao> sessao = sessaoRepository.findById(voto.getSessao().getId());
+        Optional<Associado> associado = associadoRepository.findById(voto.getAssociado().getId());
+        if(associado.isEmpty()){
+            logger.error("Error Exception: Associado não encontrado");
+            throw new NotFoundException("Associado não encontrado");
+        }
+
+
         if(sessao.isPresent()){
             long minutesBetween = ChronoUnit.MINUTES.between(sessao.get().getDataHoraInicio(), LocalDateTime.now());
-            if(minutesBetween > sessao.get().getTempoSessao())
+            if(minutesBetween > sessao.get().getTempoSessao()){
+                logger.error("Error Exception: Serrão encerrada");
                 throw new TimeoutException("Sessão encerrada");
+            }
+
         }else{
+            logger.error("Error Exception: Sessão não encontrada");
             throw new NotFoundException("Sessão não encontrada");
         }
 
         if(votoRepository.findByAssociadoIdAndSessaoId(voto.getAssociado().getId(), voto.getSessao().getId()).isPresent()){
+            logger.error("Error Exception: Associado já votou");
             throw new EntityExistsException("Associado já votou.");
         }
 
-        if(cpfClient(voto.getAssociado().getCpf()))
+        if(cpfClient(associado.get().getCpf())){
+            logger.error("Error Exception: Não habilitado para votar");
             throw new NotFoundException("Não habilitado para votar");
+        }
+
     }
 
     public Boolean cpfClient(String cpf) {

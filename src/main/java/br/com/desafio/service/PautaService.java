@@ -2,6 +2,8 @@ package br.com.desafio.service;
 
 import br.com.desafio.model.Pauta;
 import br.com.desafio.repository.PautaRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ public class PautaService {
 
     @Autowired
     private PautaRepository pautaRepository;
+
+    private Logger logger = LoggerFactory.getLogger(PautaService.class);
 
     public Pauta save(Pauta pauta) throws Exception {
         validaPauta(pauta.getDescricao());
@@ -29,7 +33,9 @@ public class PautaService {
     }
 
     private void validaPauta(String descricao) {
-        if(pautaRepository.findByDescricao(descricao).isPresent())
+        if(pautaRepository.findByDescricao(descricao).isPresent()){
+            logger.error("Error Exception: Descrição de Pauta já existe");
             throw new EntityExistsException("Descrição de Pauta já existe");
+        }
     }
 }
