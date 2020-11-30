@@ -1,7 +1,6 @@
 package br.com.desafio.dto;
 
 import br.com.desafio.model.Associado;
-import br.com.desafio.model.Pauta;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;

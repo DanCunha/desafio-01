@@ -63,8 +63,8 @@ public class SessaoService {
 
         List<Voto> votoList = votoRepository.findBySessaoId(id);
 
-        int votoSim = (int) votoList.stream().filter(v -> v.getVoto() == true).count();
-        int votoNao = (int) votoList.stream().filter(v -> v.getVoto() == false).count();
+        int votoSim = (int) votoList.stream().filter(v -> v.getVotoValue().equals(true)).count();
+        int votoNao = (int) votoList.stream().filter(v -> v.getVotoValue().equals(false)).count();
 
         return ResponseSessaoDTO.builder()
                         .sessaoId(id)
@@ -112,7 +112,7 @@ public class SessaoService {
 
     }
 
-    public Boolean cpfClient(String cpf) {
+    public boolean cpfClient(String cpf) {
         Mono<ResponseClientDTO> message = WebClient.create("https://user-info.herokuapp.com").get().uri(uriBuilder -> uriBuilder.path("/users/"+cpf).build()).retrieve()
                 .bodyToMono(ResponseClientDTO.class);
         ResponseClientDTO result = message.block();

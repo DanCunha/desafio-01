@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 public class SessaoMapper {
 
+    private SessaoMapper() {
+    }
+
     public static Sessao convertToEntity(SessaoDTO dto) {
         return Sessao.builder()
                 .pauta(Pauta.builder().id(dto.getPautaId()).build())

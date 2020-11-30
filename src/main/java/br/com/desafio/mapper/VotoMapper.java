@@ -7,10 +7,13 @@ import br.com.desafio.model.Voto;
 
 public class VotoMapper {
 
+    private VotoMapper() {
+    }
+
     public static Voto convertToEntity(VotoDTO dto) {
         return Voto.builder()
                 .associado(Associado.builder().id(dto.getAssociadoId()).build())
                 .sessao(Sessao.builder().id(dto.getSessaoId()).build())
-                .voto(dto.getVoto()).build();
+                .votoValue(dto.getVotoValue()).build();
     }
 }

@@ -16,7 +16,7 @@ public class Voto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Boolean voto;
+    private Boolean votoValue;
 
     @ManyToOne
     private Sessao sessao;

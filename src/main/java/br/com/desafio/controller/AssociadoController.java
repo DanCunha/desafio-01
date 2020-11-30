@@ -1,10 +1,8 @@
 package br.com.desafio.controller;
 
-import br.com.desafio.config.swagger.utils.ValidateCpf;
 import br.com.desafio.dto.AssociadoDTO;
 import br.com.desafio.dto.ResponseDTO;
 import br.com.desafio.model.Associado;
-import br.com.desafio.repository.AssociadoRepository;
 import br.com.desafio.service.AssociadoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -14,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityExistsException;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;

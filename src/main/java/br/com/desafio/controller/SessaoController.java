@@ -6,10 +6,8 @@ import br.com.desafio.dto.SessaoDTO;
 import br.com.desafio.dto.VotoDTO;
 import br.com.desafio.mapper.SessaoMapper;
 import br.com.desafio.mapper.VotoMapper;
-import br.com.desafio.model.Associado;
 import br.com.desafio.model.Sessao;
 import br.com.desafio.model.Voto;
-import br.com.desafio.repository.SessaoRepository;
 import br.com.desafio.repository.VotoRepository;
 import br.com.desafio.service.SessaoService;
 import io.swagger.annotations.Api;
@@ -19,17 +17,10 @@ import io.swagger.annotations.ApiResponses;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityExistsException;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.TimeoutException;
 
 @RestController
 @RequestMapping(value = "/sessao")

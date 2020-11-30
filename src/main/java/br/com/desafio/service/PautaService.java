@@ -19,7 +19,7 @@ public class PautaService {
 
     private Logger logger = LoggerFactory.getLogger(PautaService.class);
 
-    public Pauta save(Pauta pauta) throws Exception {
+    public Pauta save(Pauta pauta) {
         validaPauta(pauta.getDescricao());
         return pautaRepository.save(pauta);
     }

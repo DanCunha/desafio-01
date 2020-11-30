@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class AssociadoServiceTest {
+class AssociadoServiceTest {
 
     @Mock
     AssociadoRepository repository;
@@ -37,7 +37,7 @@ public class AssociadoServiceTest {
     }
 
     @Test
-    public void createAssociado() throws Exception {
+    void createAssociado() throws Exception {
 
         Associado associado = Associado.builder().nome("Daniel").cpf("52328775268").build();
 
@@ -48,7 +48,7 @@ public class AssociadoServiceTest {
     }
 
     @Test
-    public void associadoListAll() throws Exception {
+    void associadoListAll() throws Exception {
         List<Associado> list = new ArrayList<>();
         list.add(Associado.builder().nome("Daniel").cpf("52328775268").build());
         list.add(Associado.builder().nome("Daniel").cpf("52328775268").build());
@@ -61,7 +61,7 @@ public class AssociadoServiceTest {
     }
 
     @Test
-    public void associadoFindById() throws Exception {
+    void associadoFindById() throws Exception {
         Long id = 1l;
         Associado associado = Associado.builder().id(1l).nome("Daniel").cpf("52328775268").build();
 
@@ -72,7 +72,7 @@ public class AssociadoServiceTest {
     }
 
     @Test
-    public void throwExceptionDueCpfInvalidCreateAssociado() throws Exception {
+    void throwExceptionDueCpfInvalidCreateAssociado() throws Exception {
 
         Associado associado = Associado.builder().nome("Daniel").cpf("52328775111").build();
 
