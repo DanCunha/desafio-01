@@ -63,7 +63,7 @@ public class SessaoController {
         try {
             Voto entity = sessaoService.votacao(VotoMapper.convertToEntity(dto));
             URI uri = uriBuilder.path("/sessao/{id}").buildAndExpand(entity.getId()).toUri();
-            return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Voto registrado com sucesso."));
+            return ResponseEntity.created(uri).body(new ResponseDTO(entity.getId(), "Voto registrado com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }

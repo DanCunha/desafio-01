@@ -11,7 +11,7 @@ class Desafio01ApplicationTests {
 	@Test
 	void contextLoads() {
 		String teste = null;
-		assertThat(teste).isEqualTo(null);
+		assertThat(teste).isNull();
 	}
 
 }

@@ -37,7 +37,7 @@ public class PautaController {
         try {
             Pauta entity  = service.save(dto.converter());
             URI uri = uriBuilder.path("/pauta/{id}").buildAndExpand(entity.getId()).toUri();
-            return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
+            return ResponseEntity.created(uri).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }

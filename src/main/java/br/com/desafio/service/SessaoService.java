@@ -44,7 +44,6 @@ public class SessaoService {
             throw new NotFoundException("Pauta não encontrada");
         }
 
-
         return sessaoRepository.save(sessao);
     }
 
@@ -59,7 +58,6 @@ public class SessaoService {
             logger.error("Error Exception: Sessão não encontrada");
             throw new NotFoundException("Sessão não encontrada");
         }
-
 
         List<Voto> votoList = votoRepository.findBySessaoId(id);
 
@@ -87,7 +85,6 @@ public class SessaoService {
             throw new NotFoundException("Associado não encontrado");
         }
 
-
         if(sessao.isPresent()){
             long minutesBetween = ChronoUnit.MINUTES.between(sessao.get().getDataHoraInicio(), LocalDateTime.now());
             if(minutesBetween > sessao.get().getTempoSessao()){
@@ -109,7 +106,6 @@ public class SessaoService {
             logger.error("Error Exception: Não habilitado para votar");
             throw new NotFoundException("Não habilitado para votar");
         }
-
     }
 
     public boolean cpfClient(String cpf) {

@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-public class PautaServiceTest {
+class PautaServiceTest {
 
     @Mock
     PautaRepository repository;
@@ -45,6 +46,18 @@ public class PautaServiceTest {
         Pauta expectedPauta = service.save(pauta);
 
         assertThat(pauta).isEqualTo(expectedPauta);
+    }
+
+    @Test
+    void createPautaDescricaoDuplicada() {
+
+        Pauta pauta = Pauta.builder().descricao("Pauta Teste").build();
+
+        Mockito.when(repository.findByDescricao(pauta.getDescricao())).thenReturn(Optional.of(pauta));
+
+        Assertions.assertThrows(EntityExistsException.class, () -> {
+            service.save(pauta);
+        });
     }
 
     @Test

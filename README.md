@@ -7,6 +7,21 @@
 * Spring Boot
 * Maven
 
+## Instalação
+
+### Running Database
+
+Com o docker instalado rodar o comando abaixo.
+````
+docker run --name postgreSQL -p 5433:5432 --restart=always  -e POSTGRES_PASSWORD=postgres -d postgres
+````
+
+### Running API
+To run the API is required to have **Maven** and **Java 11** installed.
+````
+mvn clean spring-boot:run
+````
+
 ## API REST
 
 Para ver a documentação REST da aplicação, acesse [API-Votacao](https://dcc-api-votacao.herokuapp.com/swagger-ui.html).
@@ -28,3 +43,9 @@ A versão da aplicação usa o formato do [Semantic Version](https://semver.org/
 * `MAJOR` - quando há um grande mudança no projeto.
 * `MINOR` - Novas funcionalidades, mudanças na API.
 * `PATCH` - Correção de bugs ou melhorias nas funcionalidades já existentes, que não alteram a API.
+
+### Running API Test
+To run the API is required to have **Maven** and **Java 11** installed.
+````
+mvn clean test
+````
