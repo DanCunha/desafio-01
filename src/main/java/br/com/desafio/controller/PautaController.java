@@ -2,9 +2,7 @@ package br.com.desafio.controller;
 
 import br.com.desafio.dto.PautaDTO;
 import br.com.desafio.dto.ResponseDTO;
-import br.com.desafio.model.Associado;
 import br.com.desafio.model.Pauta;
-import br.com.desafio.repository.PautaRepository;
 import br.com.desafio.service.PautaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,12 +10,11 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityExistsException;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,10 +33,11 @@ public class PautaController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto) {
+    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto, UriComponentsBuilder uriBuilder) {
         try {
             Pauta entity  = service.save(dto.converter());
-            return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
+            URI uri = uriBuilder.path("/pauta/{id}").buildAndExpand(entity.getId()).toUri();
+            return ResponseEntity.created(uri).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }

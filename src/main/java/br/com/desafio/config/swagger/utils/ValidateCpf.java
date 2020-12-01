@@ -1,10 +1,17 @@
 package br.com.desafio.config.swagger.utils;
 
+import br.com.desafio.exception.CpfInvalidException;
+
 import java.util.InputMismatchException;
 
 public class ValidateCpf {
 
-    public static void isCPF(String cpf) throws Exception {
+    private ValidateCpf() {
+    }
+
+    public static final String INVALID_CPF = "CPF inválido";
+
+    public static void isCPF(String cpf) throws CpfInvalidException {
         // considera-se erro CPF's formados por uma sequencia de numeros iguais
         if (cpf.equals("00000000000") ||
                 cpf.equals("11111111111") ||
@@ -13,7 +20,7 @@ public class ValidateCpf {
                 cpf.equals("66666666666") || cpf.equals("77777777777") ||
                 cpf.equals("88888888888") || cpf.equals("99999999999") ||
                 (cpf.length() != 11)) {
-            throw new Exception("CPF inválido");
+            throw new CpfInvalidException(INVALID_CPF);
         }
 
         char dig10;
@@ -59,9 +66,9 @@ public class ValidateCpf {
 
             // Verifica se os digitos calculados conferem com os digitos informados.
             if ( !((dig10 == cpf.charAt(9)) && (dig11 == cpf.charAt(10))) )
-                throw new Exception("CPF inválido");
+                throw new CpfInvalidException(INVALID_CPF);
         } catch (InputMismatchException erro) {
-            throw new Exception("CPF inválido");
+            throw new CpfInvalidException(INVALID_CPF);
         }
     }
 }

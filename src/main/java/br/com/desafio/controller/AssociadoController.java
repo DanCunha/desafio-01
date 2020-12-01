@@ -1,22 +1,17 @@
 package br.com.desafio.controller;
 
-import br.com.desafio.config.swagger.utils.ValidateCpf;
 import br.com.desafio.dto.AssociadoDTO;
 import br.com.desafio.dto.ResponseDTO;
 import br.com.desafio.model.Associado;
-import br.com.desafio.repository.AssociadoRepository;
 import br.com.desafio.service.AssociadoService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.persistence.EntityExistsException;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,10 +30,11 @@ public class AssociadoController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody AssociadoDTO dto) {
+    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody AssociadoDTO dto, UriComponentsBuilder uriBuilder) {
         try {
             Associado associado = service.save(dto.converter());
-            return ResponseEntity.created(null).body(new ResponseDTO(associado.getId(), "Associado cadastrado com sucesso."));
+            URI uri = uriBuilder.path("/associado/{id}").buildAndExpand(associado.getId()).toUri();
+            return ResponseEntity.created(uri).body(new ResponseDTO(associado.getId(), "Associado cadastrado com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }

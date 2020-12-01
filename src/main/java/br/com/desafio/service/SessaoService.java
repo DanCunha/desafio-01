@@ -44,7 +44,6 @@ public class SessaoService {
             throw new NotFoundException("Pauta não encontrada");
         }
 
-
         return sessaoRepository.save(sessao);
     }
 
@@ -60,11 +59,10 @@ public class SessaoService {
             throw new NotFoundException("Sessão não encontrada");
         }
 
-
         List<Voto> votoList = votoRepository.findBySessaoId(id);
 
-        int votoSim = (int) votoList.stream().filter(v -> v.getVoto() == true).count();
-        int votoNao = (int) votoList.stream().filter(v -> v.getVoto() == false).count();
+        int votoSim = (int) votoList.stream().filter(v -> v.getVotoValue().equals(true)).count();
+        int votoNao = (int) votoList.stream().filter(v -> v.getVotoValue().equals(false)).count();
 
         return ResponseSessaoDTO.builder()
                         .sessaoId(id)
@@ -87,7 +85,6 @@ public class SessaoService {
             throw new NotFoundException("Associado não encontrado");
         }
 
-
         if(sessao.isPresent()){
             long minutesBetween = ChronoUnit.MINUTES.between(sessao.get().getDataHoraInicio(), LocalDateTime.now());
             if(minutesBetween > sessao.get().getTempoSessao()){
@@ -109,10 +106,9 @@ public class SessaoService {
             logger.error("Error Exception: Não habilitado para votar");
             throw new NotFoundException("Não habilitado para votar");
         }
-
     }
 
-    public Boolean cpfClient(String cpf) {
+    public boolean cpfClient(String cpf) {
         Mono<ResponseClientDTO> message = WebClient.create("https://user-info.herokuapp.com").get().uri(uriBuilder -> uriBuilder.path("/users/"+cpf).build()).retrieve()
                 .bodyToMono(ResponseClientDTO.class);
         ResponseClientDTO result = message.block();

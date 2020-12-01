@@ -1,6 +1,7 @@
 package br.com.desafio.service;
 
 import br.com.desafio.config.swagger.utils.ValidateCpf;
+import br.com.desafio.exception.CpfInvalidException;
 import br.com.desafio.model.Associado;
 import br.com.desafio.repository.AssociadoRepository;
 import org.slf4j.Logger;
@@ -20,7 +21,7 @@ public class AssociadoService {
 
     private Logger logger = LoggerFactory.getLogger(AssociadoService.class);
 
-    public Associado save(Associado associado) throws Exception {
+    public Associado save(Associado associado) throws CpfInvalidException {
         validaAssociado(associado);
         return associadoRepository.save(associado);
     }
@@ -33,7 +34,7 @@ public class AssociadoService {
         return associadoRepository.findById(id);
     }
 
-    private void validaAssociado(Associado associado) throws Exception {
+    private void validaAssociado(Associado associado) throws CpfInvalidException {
         ValidateCpf.isCPF(associado.getCpf());
 
         if(associadoRepository.findByCpf(associado.getCpf()).isPresent()){

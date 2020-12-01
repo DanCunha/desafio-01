@@ -1,14 +1,9 @@
 package br.com.desafio.dto;
 
-import br.com.desafio.model.Associado;
-import br.com.desafio.model.Sessao;
 import lombok.*;
 
-import javax.persistence.ManyToOne;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NegativeOrZero;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -20,7 +15,7 @@ public class VotoDTO {
     private Long id;
 
     @NotNull
-    private Boolean voto;
+    private Boolean votoValue;
 
     @Min(value = 1)
     private Long sessaoId;
