@@ -18,8 +18,10 @@ import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -40,11 +42,12 @@ public class SessaoController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody SessaoDTO dto) {
+    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody SessaoDTO dto, UriComponentsBuilder uriBuilder) {
         try {
             Sessao sessao = SessaoMapper.convertToEntity(dto);
             Sessao entity = sessaoService.save(sessao);
-            return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Sessão criada com sucesso."));
+            URI uri = uriBuilder.path("/sessao/{id}").buildAndExpand(entity.getId()).toUri();
+            return ResponseEntity.created(uri).body(new ResponseDTO(entity.getId(), "Sessão criada com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -56,9 +59,10 @@ public class SessaoController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ResponseDTO> votacao(@Valid @RequestBody VotoDTO dto) {
+    public ResponseEntity<ResponseDTO> votacao(@Valid @RequestBody VotoDTO dto, UriComponentsBuilder uriBuilder) {
         try {
             Voto entity = sessaoService.votacao(VotoMapper.convertToEntity(dto));
+            URI uri = uriBuilder.path("/sessao/{id}").buildAndExpand(entity.getId()).toUri();
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(), "Voto registrado com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));

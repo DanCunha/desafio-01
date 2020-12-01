@@ -11,8 +11,10 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,9 +33,10 @@ public class PautaController {
             @ApiResponse(code = 201, message = "Successfully created"),
             @ApiResponse(code = 400, message = "Validation error")
     })
-    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto) {
+    public ResponseEntity<ResponseDTO> add(@Valid @RequestBody PautaDTO dto, UriComponentsBuilder uriBuilder) {
         try {
             Pauta entity  = service.save(dto.converter());
+            URI uri = uriBuilder.path("/pauta/{id}").buildAndExpand(entity.getId()).toUri();
             return ResponseEntity.created(null).body(new ResponseDTO(entity.getId(),"Pauta criada com sucesso."));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));

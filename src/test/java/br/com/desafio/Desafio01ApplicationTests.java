@@ -10,8 +10,8 @@ class Desafio01ApplicationTests {
 
 	@Test
 	void contextLoads() {
-		String teste = "teste";
-		assertThat(teste).isEqualTo(teste);
+		String teste = null;
+		assertThat(teste).isEqualTo(null);
 	}
 
 }
