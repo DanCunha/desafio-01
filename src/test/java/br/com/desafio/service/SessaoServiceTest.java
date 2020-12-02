@@ -106,7 +106,8 @@ class SessaoServiceTest {
         assertThat(expectedResponse).isNotNull();
     }
 
-    @Test
+    //Teste depende do retorno da api https://user-info.herokuapp.com/users/cpf que valida e invalida aleatóriamente.
+/*    @Test
     void createVoto() throws Exception {
 
         Associado associado = Associado.builder().id(1l).nome("Daniel").cpf("52328775268").build();
@@ -119,16 +120,14 @@ class SessaoServiceTest {
         Mockito.when(repository.findById(1l)).thenReturn(Optional.of(sessao));
 
         Voto voto = Voto.builder().id(1l).votoValue(true).associado(associado).sessao(sessao).build();
-        //Mockito.when(service.votacao(voto)).thenReturn(voto);
-        //Voto expectedVoto = service.votacao(voto);
-        //assertThat(expectedVoto).isNotNull();
 
         Assertions.assertThrows(NotFoundException.class, () -> {
             service.votacao(voto);
         });
-    }
+    }*/
 
-    @Test
+    //Teste depende do retorno da api https://user-info.herokuapp.com/users/cpf que valida e invalida aleatóriamente.
+/*    @Test
     void createVotoNaoHabilitado() throws Exception {
 
         Associado associado = Associado.builder().id(1l).nome("Daniel").cpf("94476435076").build();
@@ -145,7 +144,7 @@ class SessaoServiceTest {
         Assertions.assertThrows(NotFoundException.class, () -> {
             service.votacao(voto);
         });
-    }
+    }*/
 
     @Test
     void createVotoAssociadoNaoEncontrado() throws Exception {
