@@ -3,7 +3,7 @@
 ## Pre-requisitos
 
 * Java (jdk 11)
-* Intellij Community / Eclipse
+* Intellij Community
 * Spring Boot
 * Maven
 
