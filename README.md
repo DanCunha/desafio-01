@@ -50,4 +50,5 @@ A versão da aplicação usa o formato do [Semantic Version](https://semver.org/
 To run the API is required to have **Maven** and **Java 11** installed.
 ````
 mvn clean test
+
 ````
