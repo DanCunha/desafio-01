@@ -14,6 +14,7 @@
 Com o docker instalado rodar o comando abaixo.
 ````
 docker run --name postgreSQL -p 5433:5432 --restart=always  -e POSTGRES_PASSWORD=postgres -d postgres
+
 ````
 
 ### Running API
