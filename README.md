@@ -6,6 +6,7 @@
 * Intellij Community
 * Spring Boot
 * Maven
+* Docker
 
 ## Instalação
 
